@@ -108,9 +108,9 @@ curl -X POST http://localhost:8080/anggota \
 Proyek ini dikerjakan oleh mahasiswa dari mata kuliah **Integrative Programming and Technology**:
 
 * Jayady Managam Gultom
+* Agung Dwi Pradipta
 * Firman Sulaiman
 * Adrian Wahyuda Aditya P
-* Agung Dwi Pradipta
 * Ahmad Hardiansyah
 
 ---
