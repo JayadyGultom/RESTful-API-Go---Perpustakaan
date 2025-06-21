@@ -1,16 +1,25 @@
 package entity
 
+import (
+	"time"
+)
+
 type Buku struct {
-	IDBuku      int    `gorm:"primaryKey;column:id_buku" json:"id_buku"`
-	Judul       string `gorm:"type:varchar(255)" json:"judul"`
-	IDPenulis   int    `gorm:"column:id_penulis" json:"id_penulis"`
-	IDPenerbit  int    `gorm:"column:id_penerbit" json:"id_penerbit"`
-	IDKategori  int    `gorm:"column:id_kategori" json:"id_kategori"`
-	TahunTerbit int    `gorm:"type:year(4)" json:"tahun_terbit"`
-	ISBN        string `gorm:"type:varchar(20)" json:"isbn"`
-	Stok        int    `gorm:"type:int" json:"stok"`
+	IDBuku        int64     `json:"id_buku" gorm:"primaryKey;autoIncrement;column:id_buku"`
+	Judul         string    `json:"judul" gorm:"column:judul"`
+	IDPenulis     int64     `json:"id_penulis" gorm:"column:id_penulis"`
+	IDPenerbit    int64     `json:"id_penerbit" gorm:"column:id_penerbit"`
+	IDKategori    int64     `json:"id_kategori" gorm:"column:id_kategori"`
+	TahunTerbit   int       `json:"tahun_terbit" gorm:"column:tahun_terbit"`
+	ISBN          string    `json:"isbn" gorm:"column:isbn"`
+	Deskripsi     string    `json:"deskripsi" gorm:"column:deskripsi"`
+	LokasiRak     string    `json:"lokasi_rak" gorm:"column:lokasi_rak"`
+	Stok          int64     `json:"stok" gorm:"column:stok"`
+	CoverBuku     string    `json:"cover_buku" gorm:"column:cover_buku"`
+	CreatedAt     time.Time `json:"created_at" gorm:"column:created_at"`
+	UpdatedAt     time.Time `json:"updated_at" gorm:"column:updated_at"`
 }
 
 func (Buku) TableName() string {
 	return "buku"
-}
+} 

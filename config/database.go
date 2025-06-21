@@ -1,24 +1,42 @@
-package config
+package database
 
 import (
-    "fmt"
-    "log"
-    "gorm.io/driver/mysql"
-    "gorm.io/gorm"
+	"fmt"
+	"log"
+	"os"
+
+	"gorm.io/driver/mysql"
+	"gorm.io/gorm"
+	"gorm.io/gorm/schema"
 )
 
-var DB *gorm.DB
+func ConnectDB() *gorm.DB {
+	// Default values jika environment variable tidak tersedia
+	dbUser := getEnv("DB_USER", "root")
+	dbPass := getEnv("DB_PASS", "")
+	dbHost := getEnv("DB_HOST", "localhost")
+	dbPort := getEnv("DB_PORT", "3306")
+	dbName := getEnv("DB_NAME", "perpustakaan-2")
 
-func ConnectDB() {
-    dsn := "root:@tcp(127.0.0.1:3306)/perpustakaan?charset=utf8mb4&parseTime=True&loc=Local"
+	dsn := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?charset=utf8mb4&parseTime=True&loc=Local",
+		dbUser, dbPass, dbHost, dbPort, dbName)
 
-    db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{
-        DisableForeignKeyConstraintWhenMigrating: true,
-    })
-    if err != nil {
-        log.Fatal("Gagal koneksi ke database: ", err)
-    }
+	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{
+		NamingStrategy: schema.NamingStrategy{
+			SingularTable: true, // Gunakan nama tabel singular
+		},
+	})
+	if err != nil {
+		log.Fatal("Database connection failed:", err)
+	}
 
-    fmt.Println("Database berhasil terkoneksi.")
-    DB = db
+	return db
+}
+
+func getEnv(key, defaultValue string) string {
+	value := os.Getenv(key)
+	if value == "" {
+		return defaultValue
+	}
+	return value
 }

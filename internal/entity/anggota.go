@@ -1,16 +1,27 @@
 package entity
 
-import "time"
+import (
+	"time"
+	"gorm.io/gorm"
+)
 
 type Anggota struct {
-    IDAnggota        int       `gorm:"primaryKey;column:id_anggota" json:"id_anggota"`
-    Nama             string    `gorm:"type:varchar(255)" json:"nama"`
-    Alamat           string    `gorm:"type:text" json:"alamat"`
-    NoTelp           string    `gorm:"type:varchar(20);column:no_telp" json:"no_telp"`
-    TanggalBergabung time.Time `gorm:"type:date;column:tanggal_bergabung" json:"tanggal_bergabung"`
-    Peminjaman       []Peminjaman `gorm:"foreignKey:IDAnggota;references:IDAnggota" json:"-"`
+	IDAnggota       int64          `json:"id_anggota" gorm:"primaryKey;autoIncrement;column:id_anggota"`
+	NamaLengkap     string         `json:"nama_lengkap"`
+	NomorIdentitas  string         `json:"nomor_identitas" gorm:"uniqueIndex"`
+	JenisKelamin    string         `json:"jenis_kelamin"`
+	Email           string         `json:"email"`
+	NomorHP         string         `json:"nomor_hp"`
+	Alamat          string         `json:"alamat"`
+	Status          string         `json:"status"`
+	TanggalBergabung time.Time     `json:"tanggal_bergabung"`
+	Foto            string         `json:"foto"`
+	KataSandi       string         `json:"kata_sandi"`
+	CreatedAt       time.Time      `json:"created_at"`
+	UpdatedAt       time.Time      `json:"updated_at"`
+	DeletedAt       gorm.DeletedAt `json:"deleted_at" gorm:"index"`
 }
 
 func (Anggota) TableName() string {
-    return "anggota"
+	return "anggota"
 }

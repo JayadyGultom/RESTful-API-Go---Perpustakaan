@@ -1,13 +1,20 @@
 package entity
 
+import (
+	"time"
+	"gorm.io/gorm"
+)
+
 type Denda struct {
-    IDDenda         int     `gorm:"column:id_denda;primaryKey"`
-    IDPengembalian  int     `gorm:"column:id_pengembalian"`
-    JumlahDenda     float64 `gorm:"column:jumlah_denda"`
-    StatusPembayaran string `gorm:"column:status_pembayaran"`
-    Pengembalian          Pengembalian   `gorm:"foreignKey:IDPengembalian;references:IDPengembalian" json:"-"`
+	IDDenda         int64          `json:"id_denda" gorm:"primaryKey;autoIncrement;column:id_denda"`
+	IDPengembalian  int64          `json:"id_pengembalian"`
+	JumlahDenda     float64        `json:"jumlah_denda"`
+	StatusPembayaran string        `json:"status_pembayaran"`
+	CreatedAt       time.Time      `json:"created_at"`
+	UpdatedAt       time.Time      `json:"updated_at"`
+	DeletedAt       gorm.DeletedAt `json:"deleted_at" gorm:"index"`
 }
 
 func (Denda) TableName() string {
-    return "denda"
+	return "denda"
 } 

@@ -1,13 +1,12 @@
 package entity
 
 type DetailPeminjaman struct {
-	IDDetail     int `gorm:"column:id_detail;primaryKey" json:"id_detail"`
-	IDPeminjaman int `gorm:"column:id_peminjaman" json:"id_peminjaman"`
-	IDBuku       int `gorm:"column:id_buku" json:"id_buku"`
-	JumlahBuku   int `gorm:"column:jumlah" json:"jumlah"`
-	Buku         Buku `gorm:"foreignKey:IDBuku;references:IDBuku" json:"-"`
+	IDDetail      int64 `json:"id_detail" gorm:"primaryKey;autoIncrement;column:id_detail"`
+	IDPeminjaman  int64 `json:"id_peminjaman"`
+	IDBuku        int64 `json:"id_buku"`
+	Jumlah        int   `json:"jumlah"`
 }
 
 func (DetailPeminjaman) TableName() string {
 	return "detail_peminjaman"
-}
+} 

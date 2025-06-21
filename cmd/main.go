@@ -1,191 +1,107 @@
 package main
 
 import (
-    "fmt"
-    "log"
-    "net/http"
-    "perpustakaan/config"
-    controller "perpustakaan/internal/interface/controllers"
-    "perpustakaan/internal/interface/middleware"
-    "perpustakaan/internal/repository"
-    "perpustakaan/internal/usecase"
+	"fmt"
+	"log"
+	"net/http"
+	database "perpustakaan/config"
+	"perpustakaan/internal/interface/controllers"
+	"perpustakaan/internal/interface/router"
+	"perpustakaan/internal/repository"
+	"perpustakaan/internal/usecase"
+	"perpustakaan/internal/interface/middleware"
 )
 
 func main() {
-    // Initialize database connection
-    config.ConnectDB()
-    db := config.DB
+	db := database.ConnectDB()
 
-    // Repository
-    anggotaRepo := repository.NewAnggotaRepository(db)
-    bukuRepo := repository.NewBukuRepository(db)
-    kategoriRepo := repository.NewKategoriBukuRepository(db)
-    penerbitRepo := repository.NewPenerbitRepository(db)
-    penulisRepo := repository.NewPenulisRepository(db)
-    petugasRepo := repository.NewPetugasRepository(db)
-    peminjamanRepo := repository.NewPeminjamanRepository(db)
-    detailPeminjamanRepo := repository.NewDetailPeminjamanRepository(db)
-    pengembalianRepo := repository.NewPengembalianRepository(db)
-    dendaRepo := repository.NewDendaRepository(db)
+	// Repository
+	anggotaRepo := repository.NewAnggotaRepository(db)
+	kategoriRepo := repository.NewKategoriBukuRepository(db)
+	penulisRepo := repository.NewPenulisRepository(db)
+	penerbitRepo := repository.NewPenerbitRepository(db)
+	petugasRepo := repository.NewPetugasRepository(db)
+	bukuRepo := repository.NewBukuRepository(db)
+	dendaRepo := repository.NewDendaRepository(db)
+	detailPeminjamanRepo := repository.NewDetailPeminjamanRepository(db)
+	logAktivitasRepo := repository.NewLogAktivitasRepository(db)
+	peminjamanRepo := repository.NewPeminjamanRepository(db)
+	pengembalianRepo := repository.NewPengembalianRepository(db)
+	reservasiRepo := repository.NewReservasiRepository(db)
 
-    // Usecase
-    anggotaUsecase := usecase.NewAnggotaUsecase(anggotaRepo)
-    bukuUsecase := usecase.NewBukuUsecase(bukuRepo)
-    kategoriUsecase := usecase.NewKategoriBukuUsecase(kategoriRepo)
-    penerbitUsecase := usecase.NewPenerbitUsecase(penerbitRepo)
-    penulisUsecase := usecase.NewPenulisUsecase(penulisRepo)
-    petugasUsecase := usecase.NewPetugasUsecase(petugasRepo)
-    peminjamanUsecase := usecase.NewPeminjamanUsecase(peminjamanRepo)
-    detailPeminjamanUsecase := usecase.NewDetailPeminjamanUsecase(detailPeminjamanRepo)
-    pengembalianUsecase := usecase.NewPengembalianUsecase(pengembalianRepo)
-    dendaUsecase := usecase.NewDendaUsecase(dendaRepo)
+	// Usecase
+	anggotaUsecase := usecase.NewAnggotaUsecase(anggotaRepo)
+	kategoriUsecase := usecase.NewKategoriBukuUsecase(kategoriRepo)
+	penulisUsecase := usecase.NewPenulisUsecase(penulisRepo)
+	penerbitUsecase := usecase.NewPenerbitUsecase(penerbitRepo)
+	petugasUsecase := usecase.NewPetugasUsecase(petugasRepo)
+	bukuUsecase := usecase.NewBukuUsecase(bukuRepo)
+	dendaUsecase := usecase.NewDendaUsecase(dendaRepo)
+	detailPeminjamanUsecase := usecase.NewDetailPeminjamanUsecase(detailPeminjamanRepo)
+	logAktivitasUsecase := usecase.NewLogAktivitasUsecase(logAktivitasRepo)
+	peminjamanUsecase := usecase.NewPeminjamanUsecase(peminjamanRepo)
+	pengembalianUsecase := usecase.NewPengembalianUsecase(pengembalianRepo)
+	reservasiUsecase := usecase.NewReservasiUsecase(reservasiRepo)
 
-    // Controller
-    anggotaController := controller.NewAnggotaController(anggotaUsecase)
-    bukuController := controller.NewBukuController(bukuUsecase)
-    kategoriController := controller.NewKategoriBukuController(kategoriUsecase)
-    penerbitController := controller.NewPenerbitController(penerbitUsecase)
-    penulisController := controller.NewPenulisController(penulisUsecase)
-    petugasController := controller.NewPetugasController(petugasUsecase)
-    peminjamanController := controller.NewPeminjamanController(peminjamanUsecase)
-    detailPeminjamanController := controller.NewDetailPeminjamanController(detailPeminjamanUsecase)
-    pengembalianController := controller.NewPengembalianController(pengembalianUsecase)
-    dendaController := controller.NewDendaController(dendaUsecase)
+	// Controller
+	anggotaController := controllers.NewAnggotaController(anggotaUsecase)
+	kategoriController := controllers.NewKategoriBukuController(kategoriUsecase)
+	penulisController := controllers.NewPenulisController(penulisUsecase)
+	penerbitController := controllers.NewPenerbitController(penerbitUsecase)
+	petugasController := controllers.NewPetugasController(petugasUsecase)
+	bukuController := controllers.NewBukuController(bukuUsecase)
+	dendaController := controllers.NewDendaController(dendaUsecase)
+	detailPeminjamanController := controllers.NewDetailPeminjamanController(detailPeminjamanUsecase)
+	logAktivitasController := controllers.NewLogAktivitasController(logAktivitasUsecase)
+	peminjamanController := controllers.NewPeminjamanController(peminjamanUsecase)
+	pengembalianController := controllers.NewPengembalianController(pengembalianUsecase)
+	reservasiController := controllers.NewReservasiController(reservasiUsecase)
 
-    // HTTP Handler
-    http.HandleFunc("/anggota/", func(w http.ResponseWriter, r *http.Request) {
-        w.Header().Set("Content-Type", "application/json")
-        if r.URL.Path == "/anggota" || r.URL.Path == "/anggota/" {
-            anggotaController.HandleAnggota(w, r)
-        } else {
-            anggotaController.HandleAnggotaByID(w, r)
-        }
-    })
+	// Router
+	r := router.SetupRouter(
+		anggotaController,
+		kategoriController,
+		penulisController,
+		penerbitController,
+		petugasController,
+		bukuController,
+		dendaController,
+		detailPeminjamanController,
+		logAktivitasController,
+		peminjamanController,
+		pengembalianController,
+		reservasiController,
+	)
 
-    http.HandleFunc("/buku/", func(w http.ResponseWriter, r *http.Request) {
-        w.Header().Set("Content-Type", "application/json")
-        if r.URL.Path == "/buku" || r.URL.Path == "/buku/" {
-            bukuController.HandleBuku(w, r)
-        } else {
-            bukuController.HandleBukuByID(w, r)
-        }
-    })
+	port := ":8080"
+	baseURL := fmt.Sprintf("http://localhost%s", port)
+	
+	fmt.Println("\n=== Perpustakaan API Server ===")
+	fmt.Println("Server berhasil dijalankan!")
+	fmt.Printf("Base URL: %s\n", baseURL)
+	fmt.Println("\nEndpoint yang tersedia:")
+	fmt.Printf("1. Anggota:\n   %s/api/anggota\n", baseURL)
+	fmt.Printf("2. Buku:\n   %s/api/buku\n", baseURL)
+	fmt.Printf("3. Kategori Buku:\n   %s/api/kategori-buku\n", baseURL)
+	fmt.Printf("4. Penulis:\n   %s/api/penulis\n", baseURL)
+	fmt.Printf("5. Penerbit:\n   %s/api/penerbit\n", baseURL)
+	fmt.Printf("6. Petugas:\n   %s/api/petugas\n", baseURL)
+	fmt.Printf("7. Denda:\n   %s/api/denda\n", baseURL)
+	fmt.Printf("8. Detail Peminjaman:\n   %s/api/detail-peminjaman\n", baseURL)
+	fmt.Printf("9. Log Aktivitas:\n   %s/api/log-aktivitas\n", baseURL)
+	fmt.Printf("10. Peminjaman:\n   %s/api/peminjaman\n", baseURL)
+	fmt.Printf("11. Pengembalian:\n   %s/api/pengembalian\n", baseURL)
+	fmt.Printf("12. Reservasi:\n   %s/api/reservasi\n", baseURL)
+	fmt.Println("\nUntuk setiap endpoint di atas, tersedia operasi:")
+	fmt.Println("   - GET    /api/[endpoint]         (mendapatkan semua data)")
+	fmt.Println("   - GET    /api/[endpoint]/{id}   (mendapatkan data berdasarkan ID)")
+	fmt.Println("   - POST   /api/[endpoint]        (menambah data baru)")
+	fmt.Println("   - PUT    /api/[endpoint]/{id}   (mengupdate data)")
+	fmt.Println("   - DELETE /api/[endpoint]/{id}   (menghapus data)")
+	fmt.Println("\nKhusus untuk Petugas, tersedia endpoint tambahan:")
+	fmt.Printf("   - GET    %s/api/petugas/username?username={username}\n", baseURL)
+	fmt.Println("\nTekan Ctrl+C untuk menghentikan server")
+	fmt.Println("==============================\n")
 
-    http.HandleFunc("/kategori-buku/", func(w http.ResponseWriter, r *http.Request) {
-        w.Header().Set("Content-Type", "application/json")
-        if r.URL.Path == "/kategori-buku" || r.URL.Path == "/kategori-buku/" {
-            kategoriController.HandleKategoriBuku(w, r)
-        } else {
-            kategoriController.HandleKategoriBukuByID(w, r)
-        }
-    })
-
-    http.HandleFunc("/penerbit/", func(w http.ResponseWriter, r *http.Request) {
-        w.Header().Set("Content-Type", "application/json")
-        if r.URL.Path == "/penerbit" || r.URL.Path == "/penerbit/" {
-            penerbitController.HandlePenerbit(w, r)
-        } else {
-            penerbitController.HandlePenerbitByID(w, r)
-        }
-    })
-
-    http.HandleFunc("/penulis/", func(w http.ResponseWriter, r *http.Request) {
-        w.Header().Set("Content-Type", "application/json")
-        if r.URL.Path == "/penulis" || r.URL.Path == "/penulis/" {
-            penulisController.HandlePenulis(w, r)
-        } else {
-            penulisController.HandlePenulisByID(w, r)
-        }
-    })
-
-    http.HandleFunc("/petugas/", func(w http.ResponseWriter, r *http.Request) {
-        w.Header().Set("Content-Type", "application/json")
-        if r.URL.Path == "/petugas" || r.URL.Path == "/petugas/" {
-            petugasController.HandlePetugas(w, r)
-        } else {
-            petugasController.HandlePetugasByID(w, r)
-        }
-    })
-
-    http.HandleFunc("/peminjaman/", func(w http.ResponseWriter, r *http.Request) {
-        w.Header().Set("Content-Type", "application/json")
-        if r.URL.Path == "/peminjaman" || r.URL.Path == "/peminjaman/" {
-            peminjamanController.HandlePeminjaman(w, r)
-        } else {
-            peminjamanController.HandlePeminjamanByID(w, r)
-        }
-    })
-
-    http.HandleFunc("/detail-peminjaman/", func(w http.ResponseWriter, r *http.Request) {
-        w.Header().Set("Content-Type", "application/json")
-        if r.URL.Path == "/detail-peminjaman" || r.URL.Path == "/detail-peminjaman/" {
-            detailPeminjamanController.HandleDetailPeminjaman(w, r)
-        } else {
-            detailPeminjamanController.HandleDetailPeminjamanByID(w, r)
-        }
-    })
-
-    http.HandleFunc("/pengembalian/", func(w http.ResponseWriter, r *http.Request) {
-        w.Header().Set("Content-Type", "application/json")
-        if r.URL.Path == "/pengembalian" || r.URL.Path == "/pengembalian/" {
-            pengembalianController.HandlePengembalian(w, r)
-        } else {
-            pengembalianController.HandlePengembalianByID(w, r)
-        }
-    })
-
-    http.HandleFunc("/denda/", func(w http.ResponseWriter, r *http.Request) {
-        w.Header().Set("Content-Type", "application/json")
-        if r.URL.Path == "/denda" || r.URL.Path == "/denda/" {
-            dendaController.HandleDenda(w, r)
-        } else {
-            dendaController.HandleDendaByID(w, r)
-        }
-    })
-
-    // Add middleware
-    handler := middleware.Logger(middleware.CORSMiddleware(http.DefaultServeMux))
-
-    // Server information and endpoints
-    port := ":8080"
-    fmt.Printf("========================================================================\n")
-    fmt.Printf("Server running on port %s...\n", port)
-    fmt.Printf("Available endpoints:\n")
-    fmt.Printf("Anggota:\n")
-    fmt.Printf("  GET, POST: http://localhost%s/anggota\n", port)
-    fmt.Printf("  GET, PUT, DELETE: http://localhost%s/anggota/{id}\n", port)
-    fmt.Printf("Buku:\n")
-    fmt.Printf("  GET, POST: http://localhost%s/buku\n", port)
-    fmt.Printf("  GET, PUT, DELETE: http://localhost%s/buku/{id}\n", port)
-    fmt.Printf("Kategori Buku:\n")
-    fmt.Printf("  GET, POST: http://localhost%s/kategori-buku\n", port)
-    fmt.Printf("  GET, PUT, DELETE: http://localhost%s/kategori-buku/{id}\n", port)
-    fmt.Printf("Penerbit:\n")
-    fmt.Printf("  GET, POST: http://localhost%s/penerbit\n", port)
-    fmt.Printf("  GET, PUT, DELETE: http://localhost%s/penerbit/{id}\n", port)
-    fmt.Printf("Penulis:\n")
-    fmt.Printf("  GET, POST: http://localhost%s/penulis\n", port)
-    fmt.Printf("  GET, PUT, DELETE: http://localhost%s/penulis/{id}\n", port)
-    fmt.Printf("Petugas:\n")
-    fmt.Printf("  GET, POST: http://localhost%s/petugas\n", port)
-    fmt.Printf("  GET, PUT, DELETE: http://localhost%s/petugas/{id}\n", port)
-    fmt.Printf("Peminjaman:\n")
-    fmt.Printf("  GET, POST: http://localhost%s/peminjaman\n", port)
-    fmt.Printf("  GET, PUT, DELETE: http://localhost%s/peminjaman/{id}\n", port)
-    fmt.Printf("Detail Peminjaman:\n")
-    fmt.Printf("  GET, POST: http://localhost%s/detail-peminjaman\n", port)
-    fmt.Printf("  GET, PUT, DELETE: http://localhost%s/detail-peminjaman/{id}\n", port)
-    fmt.Printf("Pengembalian:\n")
-    fmt.Printf("  GET, POST: http://localhost%s/pengembalian\n", port)
-    fmt.Printf("  GET, PUT, DELETE: http://localhost%s/pengembalian/{id}\n", port)
-    fmt.Printf("Denda:\n")
-    fmt.Printf("  GET, POST: http://localhost%s/denda\n", port)
-    fmt.Printf("  GET, PUT, DELETE: http://localhost%s/denda/{id}\n", port)
-    fmt.Printf("========================================================================\n")
-
-    // Start server
-    err := http.ListenAndServe(port, handler)
-    if err != nil {
-        log.Fatal(err)
-    }
+	log.Fatal(http.ListenAndServe(port, middleware.CORSMiddleware(r)))
 }
