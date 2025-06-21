@@ -4,7 +4,7 @@ Repository ini berisi **RESTful API** untuk sistem informasi **Perpustakaan**, y
 
 Proyek ini merupakan **tugas kelompok** untuk mata kuliah **Integrative Programming and Technology**. Dalam proyek ini, sistem dikembangkan secara **lintas platform**, yaitu:
 
-- **API Backend**: Golang
+- **API Backend**: Golang✅
 - **Web Frontend**: Laravel
 - **Mobile App**: Flutter
 - **Desktop App**: VB.NET
